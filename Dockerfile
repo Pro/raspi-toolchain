@@ -26,9 +26,6 @@ WORKDIR /home/develop
 RUN wget https://ftp.gnu.org/gnu/gcc/gcc-8.3.0/gcc-8.3.0.tar.gz && \
     tar xf gcc-8.3.0.tar.gz && \
     rm gcc-8.3.0.tar.gz
-RUN wget https://ftpmirror.gnu.org/gcc/gcc-9.2.0/gcc-9.2.0.tar.gz && \
-    tar xf gcc-9.2.0.tar.gz && \
-    rm gcc-9.2.0.tar.gz
 # Download and extract LibC
 RUN wget https://ftp.gnu.org/gnu/libc/glibc-2.29.tar.bz2 && \
     tar xjf glibc-2.29.tar.bz2 && \
@@ -39,7 +36,7 @@ RUN wget https://ftp.gnu.org/gnu/binutils/binutils-2.32.tar.bz2 && \
     rm binutils-2.32.tar.bz2
 # Download the GCC prerequisites
 RUN cd gcc-8.3.0 && contrib/download_prerequisites && rm *.tar.*
-RUN cd gcc-9.2.0 && contrib/download_prerequisites && rm *.tar.*
+#RUN cd gcc-9.2.0 && contrib/download_prerequisites && rm *.tar.*
 
 # Build BinUtils
 RUN mkdir -p /opt/cross-pi-gcc
@@ -107,16 +104,16 @@ WORKDIR /home/develop/build-gcc
 RUN make -j$(nproc)
 RUN make install
 
-RUN cp -r /opt/cross-pi-gcc /opt/cross-pi-gcc-8.3.0
-
-WORKDIR /home/develop/build-gcc9
-RUN ../gcc-9.2.0/configure \
-        --prefix=/opt/cross-pi-gcc \
-        --target=arm-linux-gnueabihf \
-        --enable-languages=c,c++,fortran \
-        --with-arch=armv6 --with-fpu=vfp --with-float=hard \
-        --disable-multilib
-RUN make -j$(nproc) all-gcc
-RUN make install-gcc
+#RUN cp -r /opt/cross-pi-gcc /opt/cross-pi-gcc-8.3.0
+#
+#WORKDIR /home/develop/build-gcc9
+#RUN ../gcc-9.2.0/configure \
+#        --prefix=/opt/cross-pi-gcc \
+#        --target=arm-linux-gnueabihf \
+#        --enable-languages=c,c++,fortran \
+#        --with-arch=armv6 --with-fpu=vfp --with-float=hard \
+#        --disable-multilib
+#RUN make -j$(nproc) all-gcc
+#RUN make install-gcc
 
 USER develop

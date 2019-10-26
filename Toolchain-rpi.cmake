@@ -74,12 +74,12 @@ elseif(RASPBERRY_VERSION VERSION_GREATER 1)
 	set(CMAKE_C_FLAGS "-mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard" CACHE STRING "Flags for Raspberry PI 2")
 	set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS}" CACHE STRING "Flags for Raspberry PI 2")
 else()
-	set(CMAKE_C_FLAGS "-march=armv6 -mcpu=arm1176jzf-s -mfpu=vfp -mfloat-abi=hard -marm" CACHE STRING "Flags for Raspberry PI 1 B+ Zero")
+	set(CMAKE_C_FLAGS "-mcpu=arm1176jzf-s -mfpu=vfp -mfloat-abi=hard -marm" CACHE STRING "Flags for Raspberry PI 1 B+ Zero")
 	set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS}" CACHE STRING "Flags for Raspberry PI 1 B+ Zero")
 endif()
 
 
-set(CMAKE_FIND_ROOT_PATH "${CMAKE_INSTALL_PREFIX}" "${CMAKE_SYSROOT}")
+#set(CMAKE_FIND_ROOT_PATH "${CMAKE_INSTALL_PREFIX}" "${CMAKE_SYSROOT}")
 
 # search for programs in the build host directories
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
