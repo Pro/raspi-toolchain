@@ -14,11 +14,31 @@ https://gist.github.com/tttapa/534fb671c5f6cced0e1722d3e4aec987
 A corresponding Blog post can be found here:
 https://solarianprogrammer.com/2018/05/06/building-gcc-cross-compiler-raspberry-pi/
 
-## How to build the toolchain
+## How to get the toolchain
 
-To build the toolchain, just clone this repository and then execute the build script `build.sh`.
+You have two options:
 
-Alternatively call:
+- Use the prebuilt toolchain attached to every github release (recommended)
+- Build the toolchain yourself
+
+### Use pre-built toolchain
+
+Every github release has a pre-build toolchain attached.
+See
+
+1. Download the toolchain:
+```bash
+wget https://github.com/Pro/raspi-toolchain/releases/latest/download/raspi-toolchain.tar.gz
+```
+2. Extract it. Note: The toolchain has to be in `/opt/cross-pi-gcc` since it's not location independent.
+```bash
+sudo tar xfz raspi-toolchain.tar.gz --strip-components=1 -C /opt
+```
+3. You are done!
+
+### Build the toolchain from source
+
+To build the toolchain, just clone this repository and then call:
 
 ```bash
 docker build -f Dockerfile --network=host -t gcc9-rpi-zero .
@@ -32,11 +52,11 @@ To run the docker container, use
 docker run -it gcc9-rpi-zero bash
 ```
 
-## Install the toolchain on your host
+### Install from source after building
 
 To get the toolchain from the docker container into your host, just copy the files:
 
-```
+```bash
 CONTAINER_ID=$(docker ps -aqf "name=gcc9-rpi-zero")
 docker cp $CONTAINER_ID:/opt/cross-pi-gcc /opt/cross-pi-gcc
 ```
