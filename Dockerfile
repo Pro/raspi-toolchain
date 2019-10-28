@@ -3,6 +3,11 @@
 # Ubuntu 18.04 at the time of writing (2019-04-02)
 FROM ubuntu:latest
 
+# This should match the one on your raspi
+ENV GCC_VERSION gcc-8.3.0
+ENV GLIBC_VERSION glibc-2.28
+ENV BINUTILS_VERSION binutils-2.31.1
+
 # Install some tools and compilers + clean up
 RUN apt-get update && \
     apt-get install -y git wget gcc-8 g++-8 cmake gdb gdbserver bzip2 && \
@@ -23,25 +28,25 @@ RUN echo "develop   ALL=(ALL:ALL) ALL" >> /etc/sudoers
 WORKDIR /home/develop
 
 # Download and extract GCC
-RUN wget https://ftp.gnu.org/gnu/gcc/gcc-8.3.0/gcc-8.3.0.tar.gz && \
-    tar xf gcc-8.3.0.tar.gz && \
-    rm gcc-8.3.0.tar.gz
+RUN wget https://ftp.gnu.org/gnu/gcc/${GCC_VERSION}/${GCC_VERSION}.tar.gz && \
+    tar xf ${GCC_VERSION}.tar.gz && \
+    rm ${GCC_VERSION}.tar.gz
 # Download and extract LibC
-RUN wget https://ftp.gnu.org/gnu/libc/glibc-2.29.tar.bz2 && \
-    tar xjf glibc-2.29.tar.bz2 && \
-    rm glibc-2.29.tar.bz2
+RUN wget https://ftp.gnu.org/gnu/libc/${GLIBC_VERSION}.tar.bz2 && \
+    tar xjf ${GLIBC_VERSION}.tar.bz2 && \
+    rm ${GLIBC_VERSION}.tar.bz2
 # Download and extract BinUtils
-RUN wget https://ftp.gnu.org/gnu/binutils/binutils-2.32.tar.bz2 && \
-    tar xjf binutils-2.32.tar.bz2 && \
-    rm binutils-2.32.tar.bz2
+RUN wget https://ftp.gnu.org/gnu/binutils/${BINUTILS_VERSION}.tar.bz2 && \
+    tar xjf ${BINUTILS_VERSION}.tar.bz2 && \
+    rm ${BINUTILS_VERSION}.tar.bz2
 # Download the GCC prerequisites
-RUN cd gcc-8.3.0 && contrib/download_prerequisites && rm *.tar.*
+RUN cd ${GCC_VERSION} && contrib/download_prerequisites && rm *.tar.*
 #RUN cd gcc-9.2.0 && contrib/download_prerequisites && rm *.tar.*
 
 # Build BinUtils
 RUN mkdir -p /opt/cross-pi-gcc
 WORKDIR /home/develop/build-binutils
-RUN ../binutils-2.32/configure \
+RUN ../${BINUTILS_VERSION}/configure \
         --prefix=/opt/cross-pi-gcc --target=arm-linux-gnueabihf \
         --with-arch=armv6 --with-fpu=vfp --with-float=hard \
         --disable-multilib
@@ -50,7 +55,7 @@ RUN make install
 
 # Build the first part of GCC
 WORKDIR /home/develop/build-gcc
-RUN ../gcc-8.3.0/configure \
+RUN ../${GCC_VERSION}/configure \
         --prefix=/opt/cross-pi-gcc \
         --target=arm-linux-gnueabihf \
         --enable-languages=c,c++,fortran \
@@ -76,7 +81,7 @@ RUN make ARCH=arm INSTALL_HDR_PATH=/opt/cross-pi-gcc/arm-linux-gnueabihf headers
 
 # Build GLIBC
 WORKDIR /home/develop/build-glibc
-RUN ../glibc-2.29/configure \
+RUN ../${GLIBC_VERSION}/configure \
         --prefix=/opt/cross-pi-gcc/arm-linux-gnueabihf \
         --build=$MACHTYPE --host=arm-linux-gnueabihf --target=arm-linux-gnueabihf \
         --with-arch=armv6 --with-fpu=vfp --with-float=hard \
@@ -104,7 +109,7 @@ WORKDIR /home/develop/build-gcc
 RUN make -j$(nproc)
 RUN make install
 
-#RUN cp -r /opt/cross-pi-gcc /opt/cross-pi-gcc-8.3.0
+#RUN cp -r /opt/cross-pi-gcc /opt/cross-pi-${GCC_VERSION}
 #
 #WORKDIR /home/develop/build-gcc9
 #RUN ../gcc-9.2.0/configure \
