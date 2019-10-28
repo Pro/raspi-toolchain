@@ -29,7 +29,7 @@ jobs:
       - task: PublishBuildArtifacts@1
         inputs:
           PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-          ArtifactName: libopen62541-debian
+          ArtifactName: raspi-toolchain
           # publishing artifacts from PRs from a fork is currently blocked
         condition: succeeded()
         displayName: "Publish Artifact: Toolchain package"
