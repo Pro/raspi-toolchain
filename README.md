@@ -14,6 +14,10 @@ https://gist.github.com/tttapa/534fb671c5f6cced0e1722d3e4aec987
 A corresponding Blog post can be found here:
 https://solarianprogrammer.com/2018/05/06/building-gcc-cross-compiler-raspberry-pi/
 
+
+A similar project can also be found here:
+https://sourceforge.net/projects/raspberry-pi-cross-compilers
+
 ## How to get the toolchain
 
 You have two options:
@@ -57,8 +61,8 @@ docker run -it gcc9-rpi-zero bash
 To get the toolchain from the docker container into your host, just copy the files:
 
 ```bash
-CONTAINER_ID=$(docker ps -aqf "name=gcc9-rpi-zero")
-docker cp $CONTAINER_ID:/opt/cross-pi-gcc /opt/cross-pi-gcc
+CONTAINER_ID=$(docker create gcc9-rpi-zero)
+sudo docker cp $CONTAINER_ID:/opt/cross-pi-gcc /opt/cross-pi-gcc
 ```
 
 It's important that you put the files into the same directory, since the toolchain has the paths hardcoded inside.
