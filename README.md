@@ -1,10 +1,13 @@
-# raspberry-crosscompile-gcc9
+# Rasperry PI Toolchains
 
-Repository for Raspberry PI cross compiler using the new GCC9 for Raspbian Buster.
+Repository for Raspberry PI cross compiler using the new GCC8 and GCC9 for Raspbian Buster.
 This supports all new Raspberry PIs (ARMv7), and the older ones, including Zero, A, B, B+ (ARMv6) with newer GCCs.
 
-By default, newer GCC versions do not create correct binaries for ARMv6.
-Running them on your RasPI Zero will cause an "Illegal Instruction" exception.
+You can probably also use this repository for any other ARMv6 and ARMv7 devices.
+
+By default, newer GCC versions do not create correct binaries for ARMv6. Even though you pass the correct `-mcpu=` flag to gcc,
+it will create startup code for the newer ARMv7 architecture. Running them on your RasPI Zero will cause an "Illegal Instruction" exception.
+
 See also:
 https://stackoverflow.com/questions/55465118/gcc-8-cross-compiler-outputs-armv7-executable-instead-of-armv6
 
@@ -14,8 +17,7 @@ https://gist.github.com/tttapa/534fb671c5f6cced0e1722d3e4aec987
 A corresponding Blog post can be found here:
 https://solarianprogrammer.com/2018/05/06/building-gcc-cross-compiler-raspberry-pi/
 
-
-A similar project can also be found here:
+A similar project can also be found here, but it only includes the compiled toolchains, which did not work out of the box for me:
 https://sourceforge.net/projects/raspberry-pi-cross-compilers
 
 ## How to get the toolchain
