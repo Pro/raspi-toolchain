@@ -20,8 +20,10 @@
 #
 ############################################################################
 
-# Source:
+# Based on:
 # https://gitlab.linphone.org/BC/public/linphone-cmake-builder/blob/master/toolchains/toolchain-raspberry.cmake
+# Updated version:
+# https://github.com/Pro/raspi-toolchain/blob/master/Toolchain-rpi.cmake
 
 if("$ENV{RASPBERRY_VERSION}" STREQUAL "")
 	set(RASPBERRY_VERSION 1)
@@ -32,6 +34,11 @@ else()
 		set(RASPBERRY_VERSION $ENV{RASPBERRY_VERSION})
 	endif()
 endif()
+
+# RASPBIAN_ROOTFS should point to the local directory which contains all the libraries and includes from the target raspi.
+# Get them with:
+# rsync -vR --progress -rl --delete-after --safe-links pi@192.168.1.PI:/{lib,usr,opt/vc/lib} $HOME/rpi/rootfs
+# Then RASPBIAN_ROOTFS=$HOME/rpi/rootfs
 
 if("$ENV{RASPBIAN_ROOTFS}" STREQUAL "")
 	message(FATAL_ERROR "Define the RASPBIAN_ROOTFS environment variable to point to the raspbian rootfs.")
@@ -64,8 +71,26 @@ endif()
 # Define the compiler
 set(CMAKE_C_COMPILER ${TOOLCHAIN_CC})
 set(CMAKE_CXX_COMPILER ${TOOLCHAIN_CXX})
-set(COMMON_FLAGS "-I${SYSROOT_PATH}/usr/include")
-set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH}" "/usr/lib/${TOOLCHAIN_HOST}")
+
+# List of library dirs where LD has to look. Pass them directly through gcc. LD_LIBRARY_PATH is not evaluated by arm-*-ld
+set(LIB_DIRS 
+	"/opt/cross-pi-gcc/arm-linux-gnueabihf/lib"
+	"/opt/cross-pi-gcc/lib"
+	"${SYSROOT_PATH}/opt/vc/lib"
+	"${SYSROOT_PATH}/lib/${TOOLCHAIN_HOST}"
+	"${SYSROOT_PATH}/usr/local/lib"
+	"${SYSROOT_PATH}/usr/lib/${TOOLCHAIN_HOST}"
+	"${SYSROOT_PATH}/usr/lib"
+	"${SYSROOT_PATH}/usr/lib/${TOOLCHAIN_HOST}/blas"
+	"${SYSROOT_PATH}/usr/lib/${TOOLCHAIN_HOST}/lapack"
+)
+# You can additionally check the linker paths if you add the flags ' -Xlinker --verbose'
+set(COMMON_FLAGS "-I${SYSROOT_PATH}/usr/include ")
+FOREACH(LIB ${LIB_DIRS})
+	set(COMMON_FLAGS "${COMMON_FLAGS} -L${LIB} -Wl,-rpath-link,${LIB}")
+ENDFOREACH()
+
+set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH};${SYSROOT_PATH}/usr/lib/${TOOLCHAIN_HOST}")
 
 if(RASPBERRY_VERSION VERSION_GREATER 2)
 	set(CMAKE_C_FLAGS "-mcpu=cortex-a53 -mfpu=neon-vfpv4 -mfloat-abi=hard ${COMMON_FLAGS}" CACHE STRING "Flags for Raspberry PI 3")
@@ -78,7 +103,7 @@ else()
 	set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS}" CACHE STRING "Flags for Raspberry PI 1 B+ Zero")
 endif()
 
-set(CMAKE_FIND_ROOT_PATH "${CMAKE_INSTALL_PREFIX}" "${CMAKE_PREFIX_PATH}" "${CMAKE_SYSROOT}")
+set(CMAKE_FIND_ROOT_PATH "${CMAKE_INSTALL_PREFIX};${CMAKE_PREFIX_PATH};${CMAKE_SYSROOT}")
 
 
 # search for programs in the build host directories
