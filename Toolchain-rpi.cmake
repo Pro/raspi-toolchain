@@ -65,7 +65,7 @@ endif()
 set(CMAKE_C_COMPILER ${TOOLCHAIN_CC})
 set(CMAKE_CXX_COMPILER ${TOOLCHAIN_CXX})
 set(COMMON_FLAGS "-I${SYSROOT_PATH}/usr/include")
-set(CMAKE_PREFIX_PATH "/usr/lib/${TOOLCHAIN_HOST}")
+set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH}" "/usr/lib/${TOOLCHAIN_HOST}")
 
 if(RASPBERRY_VERSION VERSION_GREATER 2)
 	set(CMAKE_C_FLAGS "-mcpu=cortex-a53 -mfpu=neon-vfpv4 -mfloat-abi=hard ${COMMON_FLAGS}" CACHE STRING "Flags for Raspberry PI 3")
@@ -78,7 +78,7 @@ else()
 	set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS}" CACHE STRING "Flags for Raspberry PI 1 B+ Zero")
 endif()
 
-set(CMAKE_FIND_ROOT_PATH "${CMAKE_INSTALL_PREFIX}" "${CMAKE_SYSROOT}")
+set(CMAKE_FIND_ROOT_PATH "${CMAKE_INSTALL_PREFIX}" "${CMAKE_PREFIX_PATH}" "${CMAKE_SYSROOT}")
 
 
 # search for programs in the build host directories
