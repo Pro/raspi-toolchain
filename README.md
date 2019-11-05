@@ -80,7 +80,7 @@ you need to get the current libraries and include files from your raspberry:
 
 ```bash
 # Use the correct IP address here
-rsync -rl --delete-after --safe-links pi@192.168.1.PI:/{lib,usr} $HOME/rpi/rootfs
+rsync -vR --progress -rl --delete-after --safe-links pi@192.168.1.PI:/{lib,usr,etc/ld.so.conf.d,opt/vc/lib} $HOME/rpi/rootfs
 ```
 
 Then call the script `build_hello_world.sh`.
