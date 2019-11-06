@@ -13,6 +13,7 @@ trigger:
 jobs:
   - job: 'create_release'
     displayName: 'Release'
+    timeoutInMinutes: 120
     pool:
       vmImage: 'ubuntu-18.04'
     steps:
