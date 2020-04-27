@@ -7,6 +7,8 @@ FROM ubuntu:latest
 ENV GCC_VERSION gcc-8.3.0
 ENV GLIBC_VERSION glibc-2.28
 ENV BINUTILS_VERSION binutils-2.31.1
+ARG DEBIAN_FRONTEND=noninteractive
+
 
 # Install some tools and compilers + clean up
 RUN apt-get update && \
