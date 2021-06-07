@@ -63,7 +63,7 @@ RUN ../${GCC_VERSION}/configure \
         --enable-languages=c,c++,fortran \
         --with-arch=armv6 --with-fpu=vfp --with-float=hard \
         --disable-multilib
-RUN make -j$(nproc) all-gcc
+RUN make -j$(nproc) 'LIMITS_H_TEST=true' all-gcc
 RUN make install-gcc
 ENV PATH=/opt/cross-pi-gcc/bin:${PATH}
 
